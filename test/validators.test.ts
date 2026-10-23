@@ -10,10 +10,12 @@ import {
   isValidPincode,
   isValidTAN,
   isValidUPI,
+  isValidUdyam,
   isValidVehicleNumber,
   maskAadhaar,
   normalizeMobile,
   normalizeUPI,
+  normalizeUdyam,
   normalizeVehicleNumber,
   panEntityType,
   parseGSTIN,
@@ -264,5 +266,34 @@ describe('vehicle registration', () => {
   });
   it('normalises spacing and case', () => {
     expect(normalizeVehicleNumber(' dl 01-ab 1234 ')).toBe('DL01AB1234');
+  });
+});
+
+describe('Udyam', () => {
+  it('validates the canonical structure', () => {
+    expect(isValidUdyam('UDYAM-MH-26-0012345')).toBe(true);
+    expect(isValidUdyam('UDYAM-AB-00-9999999')).toBe(true);
+  });
+
+  it('rejects malformed prefixes, state, district and serial fields', () => {
+    for (const value of [
+      'UDYAM-MH-26-001234',
+      'UDYAM-MH-26-00123456',
+      'UDYAM-M-26-0012345',
+      'UDYAM-MH-2-0012345',
+      'UDYAM-MH-AA-0012345',
+      'UDYAM-MH-26-00123A5',
+      'UDYAM-MH-26-0012345-extra',
+      'udyam-mh-26-0012345',
+      '',
+    ]) {
+      expect(isValidUdyam(value)).toBe(false);
+    }
+  });
+
+  it('normalises case, spaces and hyphens to the canonical form', () => {
+    expect(normalizeUdyam(' udyam mh 26 0012345 ')).toBe('UDYAM-MH-26-0012345');
+    expect(normalizeUdyam('Udyam-MH-26-0012345')).toBe('UDYAM-MH-26-0012345');
+    expect(normalizeUdyam('invalid input')).toBe('INVALIDINPUT');
   });
 });

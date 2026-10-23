@@ -270,6 +270,26 @@ export function maskAadhaar(value: string, maskChar = 'X'): string {
 }
 
 // ---------------------------------------------------------------------------
+// Udyam (MSME registration)
+// ---------------------------------------------------------------------------
+
+/**
+ * Normalise an Udyam registration number to `UDYAM-SS-DD-NNNNNNN`.
+ * Whitespace and hyphens are ignored while parsing; malformed input is compacted
+ * so validation can reject it without throwing.
+ */
+export function normalizeUdyam(value: string): string {
+  const cleaned = value.replace(/[\s-]+/g, '').toUpperCase();
+  const match = /^(UDYAM)([A-Z]{2})(\d{2})(\d{7})$/.exec(cleaned);
+  return match ? `${match[1]}-${match[2]}-${match[3]}-${match[4]}` : cleaned;
+}
+
+/** Validate the Udyam number structure: prefix, two-letter state, two-digit district and seven-digit serial. Input must be normalised. */
+export function isValidUdyam(value: string): boolean {
+  return /^UDYAM-[A-Z]{2}-\d{2}-\d{7}$/.test(value);
+}
+
+// ---------------------------------------------------------------------------
 // Vehicle registration
 // ---------------------------------------------------------------------------
 
