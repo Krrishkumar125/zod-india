@@ -1,5 +1,11 @@
 # zod-india
 
+## 0.4.0
+
+### Minor Changes
+
+- 6f8601f: Add Udyam (MSME) registration number normalization, validation and Zod schema. Thanks @Aaqibhafeezkhan (#5).
+
 ## 0.3.2
 
 ### Patch Changes
