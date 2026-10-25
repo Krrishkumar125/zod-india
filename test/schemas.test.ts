@@ -9,6 +9,7 @@ import {
   zPincode,
   zTAN,
   zUPI,
+  zUdyam,
   zVehicleNumber,
 } from '../src/index';
 
@@ -22,6 +23,14 @@ describe('zod schemas', () => {
     ['zTAN', zTAN, 'dela12345b', 'DELA12345B', 'DEL123456B', 'Invalid TAN'],
     ['zIFSC', zIFSC, 'sbin0000001', 'SBIN0000001', 'SBIN1000001', 'Invalid IFSC code'],
     ['zUPI', zUPI, ' Name@OkAxis', 'name@okaxis', 'name@', 'Invalid UPI ID'],
+    [
+      'zUdyam',
+      zUdyam,
+      'udyam mh 26 0012345',
+      'UDYAM-MH-26-0012345',
+      'UDYAM-MH-26-123456',
+      'Invalid Udyam number',
+    ],
     [
       'zMobile',
       zMobile,

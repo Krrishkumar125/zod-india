@@ -8,6 +8,7 @@ import {
   isValidPincode,
   isValidTAN,
   isValidUPI,
+  isValidUdyam,
   isValidVehicleNumber,
   normalizeAadhaar,
   normalizeGSTIN,
@@ -17,6 +18,7 @@ import {
   normalizePincode,
   normalizeTAN,
   normalizeUPI,
+  normalizeUdyam,
   normalizeVehicleNumber,
 } from './validators';
 
@@ -71,6 +73,9 @@ export const zPincode = (options?: SchemaOptions) =>
 /** Aadhaar schema: 12 digits, not starting 0/1, Verhoeff checksum. Output has no spaces. */
 export const zAadhaar = (options?: SchemaOptions) =>
   build(isValidAadhaar, normalizeAadhaar, 'Invalid Aadhaar number', options);
+/** Udyam (MSME) registration number schema. Output is canonical upper-case with hyphens. */
+export const zUdyam = (options?: SchemaOptions) =>
+  build(isValidUdyam, normalizeUdyam, 'Invalid Udyam number', options);
 /** Vehicle registration schema (state series or BH series). Output is compact upper-case. */
 export const zVehicleNumber = (options?: SchemaOptions) =>
   build(

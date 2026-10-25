@@ -7,7 +7,7 @@
 [![downloads](https://img.shields.io/npm/dm/zod-india)](https://www.npmjs.com/package/zod-india)
 
 [Zod](https://zod.dev) schemas and zero-dependency validators for Indian identifiers and formats:
-**GSTIN, PAN, TAN, IFSC, UPI ID, mobile number, PIN code, Aadhaar and vehicle registration**.
+**GSTIN, PAN, TAN, IFSC, UPI ID, mobile number, PIN code, Aadhaar, Udyam registration and vehicle registration**.
 
 - Real checksums where they exist: GSTIN mod-36 and Aadhaar Verhoeff, not just regexes.
 - Normalises messy input (`" 27aapfu0939f1zv "` → `27AAPFU0939F1ZV`, `098765 43210` → `+919876543210`).
@@ -32,13 +32,14 @@ npm install zod-india zod
 
 ```ts
 import { z } from 'zod';
-import { zGSTIN, zPAN, zMobile, zAadhaar, maskAadhaar } from 'zod-india';
+import { zGSTIN, zPAN, zMobile, zAadhaar, zUdyam, maskAadhaar } from 'zod-india';
 
 const Merchant = z.object({
   gstin: zGSTIN(),
   pan: zPAN(),
   phone: zMobile(),
   aadhaar: zAadhaar().transform((v) => maskAadhaar(v)), // store only the masked form
+  udyam: zUdyam(),
 });
 
 Merchant.parse({
@@ -46,8 +47,9 @@ Merchant.parse({
   pan: 'aapfu0939f',
   phone: '+91 98765 43210',
   aadhaar: '2341 2341 2346',
+  udyam: 'udyam mh 26 0012345',
 });
-// { gstin: '27AAPFU0939F1ZV', pan: 'AAPFU0939F', phone: '+919876543210', aadhaar: 'XXXX XXXX 2346' }
+// { gstin: '27AAPFU0939F1ZV', pan: 'AAPFU0939F', phone: '+919876543210', aadhaar: 'XXXX XXXX 2346', udyam: 'UDYAM-MH-26-0012345' }
 ```
 
 Every schema factory takes the same options:
@@ -81,6 +83,7 @@ panEntityType('AAPFU0939F'); // 'Firm / LLP'
 | Mobile       | `zMobile()`        | `isValidMobile`        | Optional `+91` / `91` / `0091` / `0`, then 10 digits starting 6–9. Spaces, dashes, brackets allowed                                       | `+919876543210` (E.164) |
 | PIN code     | `zPincode()`       | `isValidPincode`       | 6 digits, first 1–9                                                                                                                       | `110001`                |
 | Aadhaar      | `zAadhaar()`       | `isValidAadhaar`       | 12 digits, not starting 0 or 1, valid Verhoeff check digit                                                                                | `234123412346`          |
+| Udyam (MSME) | `zUdyam()`         | `isValidUdyam`         | `UDYAM-SS-DD-NNNNNNN`: prefix, 2-letter state, 2-digit district and 7-digit serial                                                        | `UDYAM-MH-26-0012345`   |
 | Vehicle reg. | `zVehicleNumber()` | `isValidVehicleNumber` | `SS NN X(XX) NNNN` with a known state/UT code, or Bharat series `YY BH NNNN XX`                                                           | `DL01AB1234`            |
 
 ### Helpers
