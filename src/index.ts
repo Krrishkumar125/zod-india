@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import {
   isValidAadhaar,
+  isValidCIN,
   isValidGSTIN,
   isValidIFSC,
   isValidMobile,
@@ -11,6 +12,7 @@ import {
   isValidUdyam,
   isValidVehicleNumber,
   normalizeAadhaar,
+  normalizeCIN,
   normalizeGSTIN,
   normalizeIFSC,
   normalizeMobile,
@@ -84,3 +86,8 @@ export const zVehicleNumber = (options?: SchemaOptions) =>
     'Invalid vehicle registration number',
     options,
   );
+
+
+/** Corporate Identification Number schema: 21-character structure and known state code. */
+export const zCIN = (options?: SchemaOptions) =>
+  build(isValidCIN, normalizeCIN, 'Invalid CIN', options);

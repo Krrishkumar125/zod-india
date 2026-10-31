@@ -7,7 +7,7 @@
 [![downloads](https://img.shields.io/npm/dm/zod-india)](https://www.npmjs.com/package/zod-india)
 
 [Zod](https://zod.dev) schemas and zero-dependency validators for Indian identifiers and formats:
-**GSTIN, PAN, TAN, IFSC, UPI ID, mobile number, PIN code, Aadhaar, Udyam registration and vehicle registration**.
+**GSTIN, CIN, PAN, TAN, IFSC, UPI ID, mobile number, PIN code, Aadhaar, Udyam registration and vehicle registration**.
 
 - Real checksums where they exist: GSTIN mod-36 and Aadhaar Verhoeff, not just regexes.
 - Normalises messy input (`" 27aapfu0939f1zv "` → `27AAPFU0939F1ZV`, `098765 43210` → `+919876543210`).
@@ -75,6 +75,7 @@ panEntityType('AAPFU0939F'); // 'Firm / LLP'
 
 | Format       | Schema             | Function               | How it is checked                                                                                                                         | Normalised output       |
 | ------------ | ------------------ | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| CIN          | `zCIN()`         | `isValidCIN`         | 21 characters; L/U listing status, 5-digit industry code, known 2-letter state code, 4-digit year, 3-letter company type and 6-digit registration number | `L17110MH1973PLC019786` |
 | GSTIN        | `zGSTIN()`         | `isValidGSTIN`         | 15 chars; known GST state code (01–38, 97, 99); characters 3–12 a valid PAN; 13th 1–9/A–Z; 14th `Z`; 15th the GSTN mod-36 check character | `27AAPFU0939F1ZV`       |
 | PAN          | `zPAN()`           | `isValidPAN`           | `AAAPA9999A`; 4th char a holder type (A B C F G H J L P T). PAN has no public checksum                                                    | `ABCPD1234E`            |
 | TAN          | `zTAN()`           | `isValidTAN`           | `AAAA99999A`                                                                                                                              | `DELA12345B`            |
@@ -86,7 +87,9 @@ panEntityType('AAPFU0939F'); // 'Firm / LLP'
 | Udyam (MSME) | `zUdyam()`         | `isValidUdyam`         | `UDYAM-SS-DD-NNNNNNN`: prefix, 2-letter state, 2-digit district and 7-digit serial                                                        | `UDYAM-MH-26-0012345`   |
 | Vehicle reg. | `zVehicleNumber()` | `isValidVehicleNumber` | `SS NN X(XX) NNNN` with a known state/UT code, or Bharat series `YY BH NNNN XX`                                                           | `DL01AB1234`            |
 
-### Helpers
+#The CIN state-code list follows the Ministry of Corporate Affairs' published [state abbreviations](https://www.mca.gov.in/bin/dms/getdocument?mds=nwCwmBNTS5nl1QpJqeEIxg%253D%253D&type=open). Validation checks the format only; it does not verify a company against the MCA register.
+
+## Helpers
 
 - `maskAadhaar(value, maskChar = 'X')` → `XXXX XXXX 1234`. Keeps only the last 4 digits.
 - `verhoeffValidate(digits)` / `verhoeffGenerate(digits)`: general-purpose Verhoeff.

@@ -336,6 +336,12 @@ export const VEHICLE_STATE_CODES: ReadonlySet<string> = new Set([
   'WB',
 ]);
 
+/** CIN state/UT codes, reusing the vehicle codes where they match MCA's list. */
+const CIN_STATE_CODES: ReadonlySet<string> = new Set([
+  ...[...VEHICLE_STATE_CODES].filter((code) => !['DN', 'OR', 'UA'].includes(code)),
+  'DH',
+]);
+
 export const normalizeVehicleNumber = compact;
 
 /**
@@ -352,3 +358,22 @@ export function isValidVehicleNumber(value: string): boolean {
 
 export * from './format';
 export * from './lookup';
+
+
+// ---------------------------------------------------------------------------
+// Corporate Identification Number (CIN)
+// ---------------------------------------------------------------------------
+
+/** Normalise a CIN by removing whitespace and hyphens and upper-casing it. */
+export const normalizeCIN = compact;
+
+/**
+ * Validate the structure of an Indian Corporate Identification Number.
+ * This is a format check only; it does not confirm registration with the MCA.
+ */
+export function isValidCIN(value: string): boolean {
+  return (
+    /^[LU]\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/.test(value) &&
+    CIN_STATE_CODES.has(value.slice(6, 8))
+  );
+}
