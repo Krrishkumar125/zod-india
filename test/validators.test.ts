@@ -300,7 +300,6 @@ describe('Udyam', () => {
   });
 });
 
-
 describe('CIN', () => {
   it('accepts public company CINs', () => {
     expect(isValidCIN('L17110MH1973PLC019786')).toBe(true);

@@ -87,7 +87,6 @@ export const zVehicleNumber = (options?: SchemaOptions) =>
     options,
   );
 
-
 /** Corporate Identification Number schema: 21-character structure and known state code. */
 export const zCIN = (options?: SchemaOptions) =>
   build(isValidCIN, normalizeCIN, 'Invalid CIN', options);

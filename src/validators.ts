@@ -359,7 +359,6 @@ export function isValidVehicleNumber(value: string): boolean {
 export * from './format';
 export * from './lookup';
 
-
 // ---------------------------------------------------------------------------
 // Corporate Identification Number (CIN)
 // ---------------------------------------------------------------------------
