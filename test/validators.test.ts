@@ -3,6 +3,7 @@ import {
   GST_STATE_CODES,
   gstinCheckChar,
   isValidAadhaar,
+  isValidCIN,
   isValidGSTIN,
   isValidIFSC,
   isValidMobile,
@@ -13,6 +14,7 @@ import {
   isValidUdyam,
   isValidVehicleNumber,
   maskAadhaar,
+  normalizeCIN,
   normalizeMobile,
   normalizeUPI,
   normalizeUdyam,
@@ -295,5 +297,39 @@ describe('Udyam', () => {
     expect(normalizeUdyam(' udyam mh 26 0012345 ')).toBe('UDYAM-MH-26-0012345');
     expect(normalizeUdyam('Udyam-MH-26-0012345')).toBe('UDYAM-MH-26-0012345');
     expect(normalizeUdyam('invalid input')).toBe('INVALIDINPUT');
+  });
+});
+
+describe('CIN', () => {
+  it('accepts public company CINs', () => {
+    expect(isValidCIN('L17110MH1973PLC019786')).toBe(true);
+    expect(isValidCIN('L85110KA1981PLC013115')).toBe(true);
+  });
+
+  it('rejects wrong lengths and malformed segments', () => {
+    for (const value of [
+      'L17110MH1973PLC01978',
+      'L17110MH1973PLC0197860',
+      'X17110MH1973PLC019786',
+      'L7110MH1973PLC019786',
+      'L1711AMH1973PLC019786',
+      'L17110MH19ABPLC019786',
+      'L17110MH1973PL1019786',
+      'L17110MH1973PLC01978A',
+      'l17110mh1973plc019786',
+      '',
+    ]) {
+      expect(isValidCIN(value)).toBe(false);
+    }
+  });
+
+  it('rejects unknown state codes', () => {
+    expect(isValidCIN('L17110ZZ1973PLC019786')).toBe(false);
+  });
+
+  it('normalises case, whitespace and hyphens', () => {
+    expect(normalizeCIN(' l17110 mh 1973 plc 019786 ')).toBe('L17110MH1973PLC019786');
+    expect(normalizeCIN('L17110-MH-1973-PLC-019786')).toBe('L17110MH1973PLC019786');
+    expect(normalizeCIN('invalid input')).toBe('INVALIDINPUT');
   });
 });
