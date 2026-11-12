@@ -41,6 +41,8 @@ describe('format', () => {
     expect(formatINRCompact(15000000)).toBe('₹1.5 Cr');
     expect(formatINRCompact(1200000)).toBe('₹12 L');
     expect(formatINRCompact(45250)).toBe('₹45.3K');
+    expect(formatINRCompact(99999)).toBe('₹1 L');
+    expect(formatINRCompact(-9999999)).toBe('-₹1 Cr');
     expect(formatINRCompact(-999, { symbol: 'Rs ' })).toBe('-Rs 999');
     expect(formatINRCompact(12.345, { decimals: 2 })).toBe('₹12.35');
     expect(() => formatINRCompact(NaN)).toThrow(TypeError);
