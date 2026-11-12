@@ -51,6 +51,7 @@ export function formatINRCompact(
   for (const [size, suffix] of units) {
     if (abs >= size) {
       const n = Number((abs / size).toFixed(decimals));
+      if (n >= 100 && size < 1e7) return formatINRCompact(Math.sign(amount) * 100 * size, options);
       return `${sign}${symbol}${n}${suffix}`;
     }
   }
