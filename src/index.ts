@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
   isValidAadhaar,
   isValidCIN,
+  isValidDIN,
   isValidGSTIN,
   isValidIFSC,
   isValidMobile,
@@ -13,6 +14,7 @@ import {
   isValidVehicleNumber,
   normalizeAadhaar,
   normalizeCIN,
+  normalizeDIN,
   normalizeGSTIN,
   normalizeIFSC,
   normalizeMobile,
@@ -90,3 +92,7 @@ export const zVehicleNumber = (options?: SchemaOptions) =>
 /** Corporate Identification Number schema: 21-character structure and known state code. */
 export const zCIN = (options?: SchemaOptions) =>
   build(isValidCIN, normalizeCIN, 'Invalid CIN', options);
+
+/** Director Identification Number schema: 8-digit numeric structure. */
+export const zDIN = (options?: SchemaOptions) =>
+  build(isValidDIN, normalizeDIN, 'Invalid DIN', options);

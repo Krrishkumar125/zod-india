@@ -33,6 +33,9 @@ export function createFaker(rnd: Random = Math.random) {
   const states = Object.keys(GST_STATE_CODES).filter((c) => c !== '97' && c !== '99');
   return {
     pan,
+    din(): string {
+      return digits(rnd, 8);
+    },
     gstin(stateCode?: string): string {
       const sc = stateCode ?? (states[Math.floor(rnd() * states.length)] as string);
       const first14 = `${sc}${pan('C')}${pick(rnd, '123456789')}Z`;
@@ -59,6 +62,7 @@ export function createFaker(rnd: Random = Math.random) {
 
 const defaultFaker = createFaker();
 export const fakePAN = defaultFaker.pan;
+export const fakeDIN = defaultFaker.din;
 export const fakeGSTIN = defaultFaker.gstin;
 export const fakeAadhaar = defaultFaker.aadhaar;
 export const fakeMobile = defaultFaker.mobile;

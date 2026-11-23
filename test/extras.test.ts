@@ -6,6 +6,7 @@ import {
   formatMobile,
   groupIndian,
   isValidAadhaar,
+  isValidDIN,
   isValidGSTIN,
   isValidIFSC,
   isValidMobile,
@@ -30,6 +31,7 @@ describe('format', () => {
     expect(groupIndian('123456789')).toBe('12,34,56,789');
     expect(() => groupIndian('1.5')).toThrow(TypeError);
   });
+
   it('formats INR', () => {
     expect(formatINR(1234567.5)).toBe('₹12,34,567.50');
     expect(formatINR(-1500, { decimals: 0 })).toBe('-₹1,500');
@@ -37,6 +39,7 @@ describe('format', () => {
     expect(formatINR(-0.001)).toBe('₹0.00');
     expect(() => formatINR(Infinity)).toThrow(TypeError);
   });
+
   it('formats compact INR', () => {
     expect(formatINRCompact(15000000)).toBe('₹1.5 Cr');
     expect(formatINRCompact(1200000)).toBe('₹12 L');
@@ -47,6 +50,7 @@ describe('format', () => {
     expect(formatINRCompact(12.345, { decimals: 2 })).toBe('₹12.35');
     expect(() => formatINRCompact(NaN)).toThrow(TypeError);
   });
+
   it('writes numbers in Indian words', () => {
     expect(toIndianWords(0)).toBe('zero');
     expect(toIndianWords(15)).toBe('fifteen');
@@ -59,6 +63,7 @@ describe('format', () => {
     expect(toIndianWords(-20000000)).toBe('minus two crore');
     expect(() => toIndianWords(1.5)).toThrow(TypeError);
   });
+
   it('writes rupees in words', () => {
     expect(rupeesInWords(1250.5)).toBe(
       'Rupees one thousand two hundred fifty and fifty paise only',
@@ -66,6 +71,7 @@ describe('format', () => {
     expect(rupeesInWords(100000)).toBe('Rupees one lakh only');
     expect(() => rupeesInWords(-1)).toThrow(TypeError);
   });
+
   it('masks and pretty-prints', () => {
     expect(maskPAN('abcpe1234f')).toBe('AB******4F');
     expect(maskPAN('ABCPE1234F', '')).toBe('AB******4F');
@@ -93,11 +99,13 @@ describe('lookup', () => {
     expect(parseVehicleNumber('DL00AB1234')).toBeUndefined();
     expect(parseVehicleNumber('nope')).toBeUndefined();
   });
+
   it('finds PIN zones', () => {
     expect(pincodeZone('110 001')?.regions).toContain('Delhi');
     expect(pincodeZone('560001')?.zone).toBe('Southern');
     expect(pincodeZone('012345')).toBeUndefined();
   });
+
   it('parses IFSC', () => {
     expect(parseIFSC('hdfc0001234')).toEqual({ bank: 'HDFC', branch: '001234' });
     expect(parseIFSC('HDFC1001234')).toBeUndefined();
@@ -109,6 +117,7 @@ describe('testing fakers', () => {
     for (let i = 0; i < 200; i++) {
       expect(isValidGSTIN(fake.fakeGSTIN())).toBe(true);
       expect(isValidPAN(fake.fakePAN())).toBe(true);
+      expect(isValidDIN(fake.fakeDIN())).toBe(true);
       expect(isValidAadhaar(fake.fakeAadhaar())).toBe(true);
       expect(isValidMobile(fake.fakeMobile())).toBe(true);
       expect(isValidPincode(fake.fakePincode())).toBe(true);
@@ -116,6 +125,7 @@ describe('testing fakers', () => {
       expect(isValidUPI(fake.fakeUPI())).toBe(true);
     }
   });
+
   it('is reproducible with a seed and honours options', () => {
     const a = fake.createFaker(fake.seededRandom(42));
     const b = fake.createFaker(fake.seededRandom(42));
@@ -124,5 +134,7 @@ describe('testing fakers', () => {
     expect(zGSTIN().parse(a.gstin())).toMatch(/^\d{2}/);
     expect(a.pan('C').charAt(3)).toBe('C');
     expect(a.ifsc('SBIN').startsWith('SBIN0')).toBe(true);
+    expect(a.din()).toMatch(/^\d{8}$/);
+    expect(a.din()).toHaveLength(8);
   });
 });

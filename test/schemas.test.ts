@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {
   zAadhaar,
   zCIN,
+  zDIN,
   zGSTIN,
   zIFSC,
   zMobile,
@@ -27,6 +28,7 @@ describe('zod schemas', () => {
       'L17110ZZ1973PLC019786',
       'Invalid CIN',
     ],
+    ['zDIN', zDIN, ' 12 345 678 ', '12345678', '1234567', 'Invalid DIN'],
     ['zGSTIN', zGSTIN, ' 27aapfu0939f1zv ', '27AAPFU0939F1ZV', '27AAPFU0939F1ZA', 'Invalid GSTIN'],
     ['zPAN', zPAN, 'abcpd 1234e', 'ABCPD1234E', 'ABCXD1234E', 'Invalid PAN'],
     ['zTAN', zTAN, 'dela12345b', 'DELA12345B', 'DEL123456B', 'Invalid TAN'],

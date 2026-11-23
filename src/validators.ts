@@ -410,3 +410,17 @@ export function isValidCIN(value: string): boolean {
     /^[LU]\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/.test(value) && CIN_STATE_CODES.has(value.slice(6, 8))
   );
 }
+// ---------------------------------------------------------------------------
+// Director Identification Number (DIN)
+// ---------------------------------------------------------------------------
+
+/** Normalise a DIN by removing whitespace and hyphens. */
+export const normalizeDIN = (value: string): string => value.replace(/[\s-]+/g, '');
+
+/**
+ * Validate an Indian Director Identification Number.
+ * Eight digits only. Format check; this does not verify issuance by the MCA.
+ */
+export function isValidDIN(value: string): boolean {
+  return /^\d{8}$/.test(value);
+}
