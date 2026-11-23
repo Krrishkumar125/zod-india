@@ -4,6 +4,7 @@ import {
   gstinCheckChar,
   isValidAadhaar,
   isValidCIN,
+  isValidDIN,
   isValidGSTIN,
   isValidIFSC,
   isValidMobile,
@@ -15,6 +16,7 @@ import {
   isValidVehicleNumber,
   maskAadhaar,
   normalizeCIN,
+  normalizeDIN,
   normalizeMobile,
   normalizeUPI,
   normalizeUdyam,
@@ -393,5 +395,25 @@ describe('CIN', () => {
     expect(normalizeCIN(' l17110 mh 1973 plc 019786 ')).toBe('L17110MH1973PLC019786');
     expect(normalizeCIN('L17110-MH-1973-PLC-019786')).toBe('L17110MH1973PLC019786');
     expect(normalizeCIN('invalid input')).toBe('INVALIDINPUT');
+  });
+});
+
+describe('DIN', () => {
+  it('accepts valid 8-digit DINs', () => {
+    expect(isValidDIN('12345678')).toBe(true);
+    expect(isValidDIN('87654321')).toBe(true);
+    expect(isValidDIN('00000001')).toBe(true);
+  });
+
+  it('rejects invalid DINs', () => {
+    for (const value of ['1234567', '123456789', '1234AB78', 'ABCDEFGH', '', ' 12345678']) {
+      expect(isValidDIN(value)).toBe(false);
+    }
+  });
+
+  it('normalises whitespace and hyphens', () => {
+    expect(normalizeDIN('12 345 678')).toBe('12345678');
+    expect(normalizeDIN('12-345-678')).toBe('12345678');
+    expect(normalizeDIN('invalid input')).toBe('invalidinput');
   });
 });

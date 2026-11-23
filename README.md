@@ -7,7 +7,7 @@
 [![downloads](https://img.shields.io/npm/dm/zod-india)](https://www.npmjs.com/package/zod-india)
 
 [Zod](https://zod.dev) schemas and zero-dependency validators for Indian identifiers and formats:
-**GSTIN, CIN, PAN, TAN, IFSC, UPI ID, mobile number, PIN code, Aadhaar, Udyam registration and vehicle registration**.
+**GSTIN, CIN, DIN, PAN, TAN, IFSC, UPI ID, mobile number, PIN code, Aadhaar, Udyam registration and vehicle registration**.
 
 - Real checksums where they exist: GSTIN mod-36 and Aadhaar Verhoeff, not just regexes.
 - Normalises messy input (`" 27aapfu0939f1zv "` → `27AAPFU0939F1ZV`, `098765 43210` → `+919876543210`).
@@ -15,7 +15,7 @@
 - Pure functions are importable without Zod from `zod-india/validators`.
 - Indian display helpers: `₹12,34,567.50`, `₹1.5 Cr`, amounts in words (`one crore twenty-three lakh…`, or Hindi `एक करोड़ तेईस लाख…` from `zod-india/hindi`), PAN/mobile/Aadhaar masking.
 - Offline lookups: state + RTO from a vehicle number, postal zone from a PIN, bank code from an IFSC.
-- Checksum-valid **fake data for tests** (`zod-india/testing`), seedable.
+- Synthetic **fake data for tests** (`zod-india/testing`), seedable; checksum-aware where applicable.
 - ESM + CJS, fully typed, tree-shakeable (`sideEffects: false`), Node 18+.
 
 > **Limits.** Every check is offline: format rules plus the published checksum where one exists.
@@ -76,6 +76,7 @@ panEntityType('AAPFU0939F'); // 'Firm / LLP'
 | Format       | Schema             | Function               | How it is checked                                                                                                                                        | Normalised output       |
 | ------------ | ------------------ | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
 | CIN          | `zCIN()`           | `isValidCIN`           | 21 characters; L/U listing status, 5-digit industry code, known 2-letter state code, 4-digit year, 3-letter company type and 6-digit registration number | `L17110MH1973PLC019786` |
+| DIN          | `zDIN()`           | `isValidDIN`           | 8 digits only; format check, does not verify MCA allotment or status                                                                                     | `12345678`              |
 | GSTIN        | `zGSTIN()`         | `isValidGSTIN`         | 15 chars; known GST state code (01–38, 97, 99); characters 3–12 a valid PAN; 13th 1–9/A–Z; 14th `Z`; 15th the GSTN mod-36 check character                | `27AAPFU0939F1ZV`       |
 | PAN          | `zPAN()`           | `isValidPAN`           | `AAAPA9999A`; 4th char a holder type (A B C F G H J L P T). PAN has no public checksum                                                                   | `ABCPD1234E`            |
 | TAN          | `zTAN()`           | `isValidTAN`           | `AAAA99999A`                                                                                                                                             | `DELA12345B`            |
@@ -90,6 +91,12 @@ panEntityType('AAPFU0939F'); // 'Firm / LLP'
 ## CIN validation
 
 The CIN state-code list follows the Ministry of Corporate Affairs' published [state abbreviations](https://www.mca.gov.in/bin/dms/getdocument?mds=nwCwmBNTS5nl1QpJqeEIxg%253D%253D&type=open). Validation checks the format only; it does not verify a company against the MCA register.
+
+## DIN validation
+
+DIN validation checks the eight-digit numeric format only. It does not verify whether a DIN has been allotted, is active, or belongs to a particular individual. No checksum or MCA status verification is performed.
+
+For official DIN allotment and filing information, see the [Ministry of Corporate Affairs DIN Related Forms](https://www.mca.gov.in/content/mca/global/en/mca/e-filing/din-related-forms.html) and the [Companies Act, 2013](https://www.mca.gov.in/content/dam/mca/pdf/CompaniesAct2013.pdf), Sections 153–158.
 
 ## Helpers
 
@@ -141,12 +148,21 @@ For full branch/bank names from an IFSC, use Razorpay's [`ifsc`](https://github.
 ## Test data
 
 ```ts
-import { fakeGSTIN, fakePAN, fakeAadhaar, createFaker, seededRandom } from 'zod-india/testing';
+import {
+  fakeGSTIN,
+  fakePAN,
+  fakeAadhaar,
+  fakeDIN,
+  createFaker,
+  seededRandom,
+} from 'zod-india/testing';
 
 fakeGSTIN(); // random, checksum-valid, e.g. '07ABCCD1234E1Z5'
 fakeGSTIN('27'); // Maharashtra
+fakeDIN(); // synthetic 8-digit DIN-format value
 const f = createFaker(seededRandom(42)); // reproducible fixtures for snapshots
 f.aadhaar(); // passes Verhoeff
+f.din(); // synthetic 8-digit DIN-format value
 ```
 
 Generated values are random and synthetic. Use them only in tests, seeds and demos.
